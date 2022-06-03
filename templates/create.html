@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<form class="contact_form" action="{{url_for('create') }}" method="post" name="contact_form">
+
+<ul>
+    <li>
+         <h2>Contact Us</h2>
+         <span class="required_notification">* Denotes Required Field</span>
+    </li>
+    <li>
+        <label for="name">Заголовок </label>
+        <input type="text" name="title" />
+
+    </li>
+        <li>
+        <label for="name">slug </label>
+        <input type="text" name="slug" />
+
+    </li>
+        <li>
+        <label for="name">Содержание </label>
+        <input type="textarea" name="content" />
+
+    </li>
+    <input type="submit" >
+</ul>
+</form>
+</body>
+</html>
