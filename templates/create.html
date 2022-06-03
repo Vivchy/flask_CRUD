@@ -6,6 +6,8 @@
 </head>
 <body>
 
+   <p>{{ add_post }}</p>
+
 <form class="contact_form" action="{{url_for('create') }}" method="post" name="contact_form">
 
 <ul>
@@ -15,17 +17,13 @@
     </li>
     <li>
         <label for="name">Заголовок </label>
-        <input type="text" name="title" />
+        <input type="text" name="title" required  />
 
     </li>
-        <li>
-        <label for="name">slug </label>
-        <input type="text" name="slug" />
 
-    </li>
         <li>
         <label for="name">Содержание </label>
-        <input type="textarea" name="content" />
+        <input type="textarea" name="content"  required />
 
     </li>
     <input type="submit" >
