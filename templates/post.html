@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>post</title>
-</head>
-<body>
-{% include 'menu.html' %}
+{% extends 'index.html' %}
+{% block title %}
+        <title>{{ post.title }}</title>
+{% endblock %}
+{% block content %}
 <h1>{{ post.title }}</h1>
 <div>
     {{post.content}}
@@ -15,5 +12,4 @@
 <br>
 <br>
 <a href="{{ url_for('update', id=post.id) }}">изменить</a>
-</body>
-</html>
+{% endblock %}

@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-{% include 'menu.html' %}
+{% extends 'index.html' %}
+{% block title %}
+        <title>создать пост</title>
+{% endblock %}
+{% block content %}
    <p>{{ add_post }}</p>
 
 <form class="contact_form" action="{{url_for('create') }}" method="post" name="contact_form">
@@ -29,5 +26,4 @@
     <input type="submit" >
 </ul>
 </form>
-</body>
-</html>
+{% endblock %}
