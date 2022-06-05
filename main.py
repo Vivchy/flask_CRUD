@@ -8,6 +8,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db'
 
 db = SQLAlchemy(app)
 
+def menu():
+    menu = db.session.query(Menu).all()
+    return menu
 
 def slug_translator(text):
     slug = ''
@@ -35,18 +38,20 @@ class Post(db.Model):
     def __repr__(self):
         return self.title[:10]
 
+
 class Menu(db.Model):
     __tablename__ = 'menu'
     id = db.Column(db.Integer(), primary_key=True)
     title = db.Column(db.String(255), nullable=False)
     url = db.Column(db.String(255), nullable=False)
+
     def __repr__(self):
         return self.title
 
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', menu=menu())
 
 
 @app.route('/create', methods=['POST', 'GET'])
@@ -61,17 +66,17 @@ def create():
             db.session.add(p)
             db.session.commit()
             print(p.title)
-            return render_template('create.html', add_post='запись добавлена')
+            return render_template('create.html', add_post='запись добавлена', menu=menu())
         except Exception as e:
             print(e)
-    return render_template('create.html')
+    return render_template('create.html', menu=menu())
 
 
 @app.route('/posts')
 def posts():
     posts = db.session.query(Post).all()
 
-    return render_template('posts.html', posts=posts)
+    return render_template('posts.html', posts=posts, menu=menu())
 
 
 @app.route('/delete/<int:id>')
@@ -85,7 +90,8 @@ def delete(id):
 @app.route('/post/<id>')
 def post(id):
     post = db.session.query(Post).get(id)
-    return render_template('post.html', post=post)
+    return render_template('post.html', post=post, menu=menu())
+
 
 @app.route('/update/<id>', methods=['POST', 'GET'])
 def update(id):
@@ -100,7 +106,8 @@ def update(id):
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('post', id=post.id))
-    return render_template('update.html', post=post)
+    return render_template('update.html', post=post, menu=menu())
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -5,7 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-
+{% include 'menu.html' %}
    <p>{{ add_post }}</p>
 
 <form class="contact_form" action="{{url_for('create') }}" method="post" name="contact_form">
