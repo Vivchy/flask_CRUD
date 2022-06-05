@@ -5,10 +5,14 @@
     <title>post</title>
 </head>
 <body>
-<h1>{{title }}</h1>
+<h1>{{ post.title }}</h1>
 <div>
-    {{content}}
+    {{post.content}}
 </div>
-<p>{{created_on}}</p>
+<p>{{post.created_on}}</p>
+<br>
+<br>
+<br>
+<a href="{{ url_for('update', id=post.id) }}">изменить</a>
 </body>
 </html>
