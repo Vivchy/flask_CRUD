@@ -34,6 +34,8 @@ class Post(db.Model):
     content = db.Column(db.Text(), nullable=False)
     created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
+    important_id = db.Column(db.Integer(), db.ForeignKey('importants.id'), nullable=True)
+
 
     def __repr__(self):
         return self.title[:10]
@@ -48,6 +50,15 @@ class Menu(db.Model):
     def __repr__(self):
         return self.title
 
+class Important(db.Model):
+    __tablename__ = 'importants'
+    id = db.Column(db.Integer(), primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    slug = db.Column(db.String(255), nullable=False)
+    posts = db.relationship('Post', backref='important')
+
+    def __repr__(self):
+        return self.title
 
 @app.route('/')
 def index():
