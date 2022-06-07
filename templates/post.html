@@ -12,4 +12,8 @@
 <br>
 <br>
 <a href="{{ url_for('update', id=post.id) }}">изменить</a>
+<p style="color: red">{{ imp.title }}</p>
+{% for i in post.tags %}
+ {{i}}
+{% endfor %}
 {% endblock %}

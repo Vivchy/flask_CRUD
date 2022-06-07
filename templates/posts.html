@@ -11,7 +11,7 @@
     <p>{{ post.content[:60] }}</p>
     <p>дата создания {{ post.created_on.strftime('%m  %d') }}</p>
       <a href="{{ url_for('delete', id=post.id) }}">удалить</a>
-      </form>
+    {{ post.important }}
   </div>
     {% endfor %}
 {% endblock %}

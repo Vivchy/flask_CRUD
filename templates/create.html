@@ -23,6 +23,11 @@
         <input type="textarea" name="content"  required />
 
     </li>
+   <p><b>выбрать теги</b></p>
+    {% for t in tag %}
+    <p><input  type="checkbox" name="{{t.slug}}"> {{t.name}}</p>
+
+    {% endfor %}
     <input type="submit" >
 </ul>
 </form>

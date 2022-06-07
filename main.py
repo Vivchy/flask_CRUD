@@ -40,7 +40,10 @@ class Post(db.Model):
     def __repr__(self):
         return self.title[:10]
 
-
+post_tags = db.Table('post_tags',
+    db.Column('post_id', db.Integer, db.ForeignKey('posts.id')),
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'))
+                     )
 class Menu(db.Model):
     __tablename__ = 'menu'
     id = db.Column(db.Integer(), primary_key=True)
@@ -60,6 +63,19 @@ class Important(db.Model):
     def __repr__(self):
         return self.title
 
+class  Tag(db.Model):
+    __tablename__ = 'tags'
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    slug = db.Column(db.String(255), nullable=False)
+    created_on  =  db.Column(db.DateTime(), default=datetime.utcnow)
+    posts = db.relationship('Post', secondary=post_tags, backref='tags')
+
+    def __repr__(self):
+        return self.name
+
+
+
 @app.route('/')
 def index():
     return render_template('index.html', menu=menu())
@@ -67,8 +83,10 @@ def index():
 
 @app.route('/create', methods=['POST', 'GET'])
 def create():
-    if request.method == 'POST':
+    tag = db.session.query(Tag).all()
 
+    if request.method == 'POST':
+        print(request.form)
         try:
             title = request.form['title']
             slug = slug_translator(title)
@@ -76,18 +94,21 @@ def create():
             p = Post(title=title, slug=slug, content=content)
             db.session.add(p)
             db.session.commit()
-            print(p.title)
-            return render_template('create.html', add_post='запись добавлена', menu=menu())
+
+            return render_template('create.html', add_post='запись добавлена', menu=menu(), tag =tag)
         except Exception as e:
             print(e)
-    return render_template('create.html', menu=menu())
+    return render_template('create.html', menu=menu(), tag =tag)
 
 
 @app.route('/posts')
 def posts():
     posts = db.session.query(Post).all()
+    imp = db.session.query(Important).all()
+    result = {}
+    print(imp[1].posts)
 
-    return render_template('posts.html', posts=posts, menu=menu())
+    return render_template('posts.html', posts=posts, imp=imp, menu=menu())
 
 
 @app.route('/delete/<int:id>')
@@ -101,7 +122,8 @@ def delete(id):
 @app.route('/post/<id>')
 def post(id):
     post = db.session.query(Post).get(id)
-    return render_template('post.html', post=post, menu=menu())
+    important = db.session.query(Important).get(post.important_id)
+    return render_template('post.html', post=post, imp=important, menu=menu())
 
 
 @app.route('/update/<id>', methods=['POST', 'GET'])
