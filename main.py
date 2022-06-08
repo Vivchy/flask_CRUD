@@ -85,20 +85,28 @@ def index():
 def create():
     tag = db.session.query(Tag).all()
 
+    arr_tag = []
     if request.method == 'POST':
         print(request.form)
         try:
+            arr = request.form.getlist('arr')
+
             title = request.form['title']
             slug = slug_translator(title)
             content = request.form['content']
             p = Post(title=title, slug=slug, content=content)
+
             db.session.add(p)
+            for r in arr:
+                the_tag = Tag.query.get(r)
+                the_tag.posts.append(p)
+                db.session.add(the_tag)
             db.session.commit()
 
-            return render_template('create.html', add_post='запись добавлена', menu=menu(), tag =tag)
+            return render_template('create.html', add_post='запись добавлена', menu=menu(), tag =tag, arr_tag=arr_tag)
         except Exception as e:
             print(e)
-    return render_template('create.html', menu=menu(), tag =tag)
+    return render_template('create.html', menu=menu(), tag =tag, arr_tag=arr_tag)
 
 
 @app.route('/posts')
