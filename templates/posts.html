@@ -6,7 +6,7 @@
   <h1>Посты</h1>
     {% for post in posts %}
   <div class="post">
-      <a href="{{ url_for('post', id=post.id) }}">
+      <a href="{{ url_for('post', slug=post.slug) }}">
           <div class="title"><h2>{{post.title}}</h2></div> </a>
     <p>{{ post.content[:60] }}</p>
     <p>дата создания {{ post.created_on.strftime('%m  %d') }}</p>

@@ -19,10 +19,13 @@ def slug_translator(text):
                       "ф": "f", "ы": "i", "в": "v", "а": "a", "п": "p", "р": "r", "о": "o",
                       "л": "l", "д": "d", "ж": "j", "э": "e", "я": "ya", "ч": "ch", "с": "s",
                       "м": "m", "и": "i", "т": "t", "ь": "j", "б": "b", "ю": "yu", " ": "_"}
+    eng_word = '1234567890qwertyuiopasdfghjklzxcvbnm'
     for w in text:
         word = w.lower()
         if word in word_translate.keys():
             slug += word_translate[word]
+        elif word in eng_word:
+            slug += word
     return slug
 
 
@@ -127,9 +130,9 @@ def delete(id):
     return redirect(url_for('posts'))
 
 
-@app.route('/post/<id>')
-def post(id):
-    post = db.session.query(Post).get(id)
+@app.route('/post/<slug>')
+def post(slug):
+    post = db.session.query(Post).filter(Post.slug == slug).first()
     important = db.session.query(Important).get(post.important_id)
     return render_template('post.html', post=post, imp=important, menu=menu())
 
@@ -146,7 +149,7 @@ def update(id):
         post.content = content
         db.session.add(post)
         db.session.commit()
-        return redirect(url_for('post', id=post.id))
+        return redirect(url_for('post', slug=post.slug))
     return render_template('update.html', post=post, menu=menu())
 
 
