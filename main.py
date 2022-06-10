@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, UserMixin, login_required
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a really really really really long secret key'
@@ -8,9 +10,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db'
 
 db = SQLAlchemy(app)
 
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+
 def menu():
     menu = db.session.query(Menu).all()
     return menu
+
 
 def slug_translator(text):
     slug = ''
@@ -39,14 +45,16 @@ class Post(db.Model):
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
     important_id = db.Column(db.Integer(), db.ForeignKey('importants.id'), nullable=True)
 
-
     def __repr__(self):
         return self.title[:10]
 
+
 post_tags = db.Table('post_tags',
-    db.Column('post_id', db.Integer, db.ForeignKey('posts.id')),
-    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'))
+                     db.Column('post_id', db.Integer, db.ForeignKey('posts.id')),
+                     db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'))
                      )
+
+
 class Menu(db.Model):
     __tablename__ = 'menu'
     id = db.Column(db.Integer(), primary_key=True)
@@ -55,6 +63,7 @@ class Menu(db.Model):
 
     def __repr__(self):
         return self.title
+
 
 class Important(db.Model):
     __tablename__ = 'importants'
@@ -66,17 +75,41 @@ class Important(db.Model):
     def __repr__(self):
         return self.title
 
-class  Tag(db.Model):
+
+class Tag(db.Model):
     __tablename__ = 'tags'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     slug = db.Column(db.String(255), nullable=False)
-    created_on  =  db.Column(db.DateTime(), default=datetime.utcnow)
+    created_on = db.Column(db.DateTime(), default=datetime.utcnow)
     posts = db.relationship('Post', secondary=post_tags, backref='tags')
 
     def __repr__(self):
         return self.name
 
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.query(User).get(user_id)
+
+class User(db.Model, UserMixin):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(100))
+    username = db.Column(db.String(50), nullable=False, unique=True)
+    email = db.Column(db.String(100), nullable=False, unique=True)
+    password_hash = db.Column(db.String(100), nullable=False)
+    created_on = db.Column(db.DateTime(), default=datetime.utcnow)
+    updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+
+        return self.username
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 
 @app.route('/')
@@ -106,10 +139,10 @@ def create():
                 db.session.add(the_tag)
             db.session.commit()
 
-            return render_template('create.html', add_post='запись добавлена', menu=menu(), tag =tag, arr_tag=arr_tag)
+            return render_template('create.html', add_post='запись добавлена', menu=menu(), tag=tag, arr_tag=arr_tag)
         except Exception as e:
             print(e)
-    return render_template('create.html', menu=menu(), tag =tag, arr_tag=arr_tag)
+    return render_template('create.html', menu=menu(), tag=tag, arr_tag=arr_tag)
 
 
 @app.route('/posts')
@@ -152,6 +185,25 @@ def update(id):
         return redirect(url_for('post', slug=post.slug))
     return render_template('update.html', post=post, menu=menu())
 
+@app.route('/admin/')
+@login_required
+def admin():
+    return render_template('admin.html', menu=menu())
 
+
+@app.route('/login/', methods=['post', 'get'])
+def login():
+    message = ''
+    if request.method == 'POST':
+        print(request.form)
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if username == 'root' and password == 'pass':
+            message = "Correct username and password"
+        else:
+            message = "Wrong username or password"
+
+    return render_template('login.html', message=message, menu=menu())
 if __name__ == "__main__":
     app.run(debug=True)

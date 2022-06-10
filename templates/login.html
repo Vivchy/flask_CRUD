@@ -1,0 +1,30 @@
+{% extends 'index.html' %}
+{% block title %}
+        <title>создать пост</title>
+{% endblock %}
+{% block content %}
+    {% for category, message in  get_flashed_messages(with_categories=true) %}
+	<spam class="{{ category }}">{{ message }}</spam>
+    {% endfor %}
+<form class="contact_form" action="" method="post" name="contact_form">
+
+<ul>
+    <li>
+         <h2>Contact Us</h2>
+         <span class="required_notification">login</span>
+    </li>
+    <li>
+        <label for="name">login </label>
+        <input type="text" name="username" required  />
+
+    </li>
+
+        <li>
+        <label for="name">password </label>
+        <input type="text" name="password"  required />
+
+    </li>
+    <input type="submit" >
+</ul>
+</form>
+{% endblock %}
