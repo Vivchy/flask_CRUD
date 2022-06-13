@@ -3,6 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_required
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, TextAreaField
+from wtforms.validators import DataRequired, Email
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a really really really really long secret key'
@@ -12,6 +15,7 @@ db = SQLAlchemy(app)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+
 
 def menu():
     menu = db.session.query(Menu).all()
@@ -33,6 +37,30 @@ def slug_translator(text):
         elif word in eng_word:
             slug += word
     return slug
+
+
+class ContactForm(FlaskForm):
+    name = StringField("Name: ", validators=[DataRequired()])
+    email = StringField("Email: ", validators=[Email()])
+    message = TextAreaField("Message", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+
+@app.route('/contact', methods=['get', 'post'])
+def contact():
+    form = ContactForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        email = form.email.data
+        message = form.message.data
+        print(name)
+        print(email)
+        print(message)
+        # здесь логика базы данных
+        print("\nData received. Now redirecting ...")
+        return redirect(url_for('contact'))
+
+    return render_template('contact.html', form=form)
 
 
 class Post(db.Model):
@@ -87,9 +115,11 @@ class Tag(db.Model):
     def __repr__(self):
         return self.name
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.query(User).get(user_id)
+
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -102,7 +132,6 @@ class User(db.Model, UserMixin):
     updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __repr__(self):
-
         return self.username
 
     def set_password(self, password):
@@ -185,6 +214,7 @@ def update(id):
         return redirect(url_for('post', slug=post.slug))
     return render_template('update.html', post=post, menu=menu())
 
+
 @app.route('/admin/')
 @login_required
 def admin():
@@ -205,5 +235,7 @@ def login():
             message = "Wrong username or password"
 
     return render_template('login.html', message=message, menu=menu())
+
+
 if __name__ == "__main__":
     app.run(debug=True)
