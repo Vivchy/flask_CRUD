@@ -41,7 +41,7 @@ def slug_translator(text):
 
 class ContactForm(FlaskForm):
     name = StringField("Name: ", validators=[DataRequired()], render_kw={"placeholder": "имя", "class":"new"})
-    email = StringField("Email: ", validators=[Email()])
+    email = StringField("Email: ", validators=[Email()], default='mail@mail.com')
     message = TextAreaField("Message", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
