@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -6,11 +6,12 @@ from flask_login import LoginManager, UserMixin, login_required
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Email
-
+from show_posts.show_posts import show_posts
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a really really really really long secret key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db'
 
+app.register_blueprint(show_posts, url_prefix='/show_posts')
 db = SQLAlchemy(app)
 
 login_manager = LoginManager(app)
