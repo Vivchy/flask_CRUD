@@ -40,7 +40,7 @@ def slug_translator(text):
 
 
 class ContactForm(FlaskForm):
-    name = StringField("Name: ", validators=[DataRequired()])
+    name = StringField("Name: ", validators=[DataRequired()], render_kw={"placeholder": "имя", "class":"new"})
     email = StringField("Email: ", validators=[Email()])
     message = TextAreaField("Message", validators=[DataRequired()])
     submit = SubmitField("Submit")
@@ -59,7 +59,7 @@ def contact():
         # здесь логика базы данных
         print("\nData received. Now redirecting ...")
         return redirect(url_for('contact'))
-
+    form.name(class_="text_blob")
     return render_template('contact.html', form=form)
 
 
