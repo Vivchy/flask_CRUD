@@ -7,6 +7,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Email
 from show_posts.show_posts import show_posts
+from loguru import logger
+
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a really really really really long secret key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db'
@@ -177,6 +180,7 @@ def posts():
     imp = db.session.query(Important).all()
     result = {}
 
+    logger.info("======= проверка кириллицы =======")
 
     return render_template('posts.html', posts=posts, imp=imp, menu=menu())
 
