@@ -54,11 +54,7 @@ def contact():
         name = form.name.data
         email = form.email.data
         message = form.message.data
-        print(name)
-        print(email)
-        print(message)
         # здесь логика базы данных
-        print("\nData received. Now redirecting ...")
         return redirect(url_for('contact'))
     form.name(class_="text_blob")
     return render_template('contact.html', form=form)
@@ -153,7 +149,6 @@ def create():
 
     arr_tag = []
     if request.method == 'POST':
-        print(request.form)
         try:
             arr = request.form.getlist('arr')
 
@@ -172,6 +167,7 @@ def create():
             return render_template('create.html', add_post='запись добавлена', menu=menu(), tag=tag, arr_tag=arr_tag)
         except Exception as e:
             print(e)
+
     return render_template('create.html', menu=menu(), tag=tag, arr_tag=arr_tag)
 
 
@@ -180,7 +176,7 @@ def posts():
     posts = db.session.query(Post).all()
     imp = db.session.query(Important).all()
     result = {}
-    print(imp[1].posts)
+
 
     return render_template('posts.html', posts=posts, imp=imp, menu=menu())
 
@@ -226,7 +222,7 @@ def admin():
 def login():
     message = ''
     if request.method == 'POST':
-        print(request.form)
+
         username = request.form.get('username')
         password = request.form.get('password')
 
