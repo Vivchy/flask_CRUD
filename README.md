@@ -115,7 +115,9 @@ server {
 > 
 >sudo ufw allow 'Nginx Full'
 
-Сайт будет доступен на привязанном url
+Сайт будет доступен на привязанном url 
+
+[источник](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uswgi-and-nginx-on-ubuntu-18-04-ru)
 
 
     
