@@ -32,7 +32,9 @@
 
 ### установить зависимости
 > pip install -r req.txt
+> 
 > pip install wheel
+> 
 > pip install uwsgi
 > 
 <h3 align="center">Инициализация бд </h3>
