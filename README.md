@@ -4,9 +4,14 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/vivchy/flask_CRUD)
 ![GitHub top language](https://img.shields.io/github/languages/top/Vivchy/flask_crud)
 
+## Установка зависимостей
+
+
+
 ## Установка бд
 <pre>
     from main import db
 
     db.create_all()
 </pre>
+    
