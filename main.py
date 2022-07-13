@@ -179,8 +179,8 @@ def posts():
     posts = db.session.query(Post).all()
     imp = db.session.query(Important).all()
     result = {}
-
-    logger.info("======= проверка кириллицы =======")
+    sss = "кирилица"
+    logger.info(sss.encode(encoding='utf-8'))
 
     return render_template('posts.html', posts=posts, imp=imp, menu=menu())
 
